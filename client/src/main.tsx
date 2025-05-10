@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { XorO, Board } from "./types";
 import Cell from "./components/Cell";
+import BoardComponent from "./components/Board";
 
 export const Main = () => {
   const [board, setBoard] = useState<Board>([
@@ -12,15 +13,7 @@ export const Main = () => {
   return (
     <div className="flex flex-col mt-10 items-center gap-10">
       <div className="font-bold text-2xl">Tic Tac Toe</div>
-      <div className="flex flex-col  gap-1">
-        {board.map((row) => (
-          <div className="flex gap-1">
-            {row.map((column) => (
-              <Cell column={column} />
-            ))}
-          </div>
-        ))}
-      </div>
+      <BoardComponent board={board} />
     </div>
   );
 };
