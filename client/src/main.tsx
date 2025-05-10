@@ -6,7 +6,7 @@ import BoardHeader from "./components/BoardHeader";
 import BoardFooter from "./components/BoardFooter";
 
 export const Main = () => {
-  const gameSize = 15; // TODO: Make this dynamic
+  const [gameSize, setGameSize] = useState(15); // Make gameSize dynamic
 
   const [board, setBoard] = useState<Board>(
     Array.from({ length: gameSize }, () => Array(gameSize).fill(null))
@@ -14,6 +14,12 @@ export const Main = () => {
 
   const [currentPlayer, setCurrentPlayer] = useState("X" as XorO);
   const [endState, setEndState] = useState<EndState>(null); // Track the win state
+
+  const handleGameSizeChange = (newSize: number) => {
+    setGameSize(newSize);
+    setBoard(Array.from({ length: newSize }, () => Array(newSize).fill(null)));
+    setEndState(null);
+  };
 
   const handleMove = (row: number, col: number) => {
     if (board[row][col] !== null) return; // TODO: Add user feedback, Skip go? Idk I think if you're stupid enough to click a taken cell you deserve to lose your turn!
@@ -41,6 +47,22 @@ export const Main = () => {
         <p className="text-2xl ">
           A simple Tic Tac Toe game built with React and TypeScript.
         </p>
+
+        <div className="space-x-4">
+          <span className="font-semibold text-lg">Game Size:</span>
+          <input
+            className="font-semibold text-lg w-48 text-black rounded-md bg-primary-100 border-primary-400 appearance-none cursor-pointer"
+            type="range"
+            min="3"
+            max="15"
+            step="1"
+            value={gameSize}
+            onChange={(e) => {
+              const newSize = parseInt(e.target.value, 10);
+              handleGameSizeChange(newSize);
+            }}
+          />
+        </div>
       </div>
 
       <div
