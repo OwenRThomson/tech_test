@@ -8,7 +8,7 @@ const app = express();
 
 app.use(express.json());
 
-const db = new Database("./db/db.sqlite");
+const db = new Database("./db.sqlite");
 
 // Enable CORS globally
 app.use(cors());
