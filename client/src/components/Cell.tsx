@@ -1,10 +1,19 @@
 import React from "react";
 import { XorO } from "../types";
 
-export default function Cell({ column }: { column: XorO | null }) {
+export default function Cell({
+  value,
+  onClick,
+}: {
+  value: XorO | null;
+  onClick: () => void;
+}) {
   return (
-    <button className="border-2 border-primary-600 w-10 h-10 cursor-pointer items-center justify-center text-2xl font-bold flex">
-      {column}
+    <button
+      className="border-2 border-primary-600 w-14 h-14 cursor-pointer items-center justify-center text-2xl font-bold flex"
+      onClick={onClick}
+    >
+      {value}
     </button>
   );
 }
