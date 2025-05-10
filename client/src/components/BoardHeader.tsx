@@ -1,28 +1,32 @@
 import React from "react";
 import { XorO } from "../types";
+import { EndState, Score } from "../types";
+import PlayerCard from "./PlayerCard";
 
 export default function BoardHeader({
   currentPlayer,
+  scores,
 }: {
   currentPlayer: XorO;
+  scores: Score[];
 }) {
+  // Simple function to get a given player's score
+  const getScore = (player: EndState) =>
+    scores?.find((score) => score.player_winner === player)?.count || 0;
+
   return (
     <div className="flex items-center flex-col space-y-4">
       <div className="flex gap-5 text-xl">
-        <div
-          className={`p-4 rounded-md text-white font-bold ${
-            currentPlayer === "X" ? "bg-primary-500" : "bg-gray-300"
-          }`}
-        >
-          Player 1 (X)
-        </div>
-        <div
-          className={`p-4 rounded-md text-white font-bold ${
-            currentPlayer === "O" ? "bg-primary-500" : "bg-gray-300"
-          }`}
-        >
-          Player 2 (O)
-        </div>
+        <PlayerCard
+          player="Player 1 (X)"
+          isCurrent={currentPlayer === "X"}
+          score={getScore("X")}
+        />
+        <PlayerCard
+          player="Player 2 (O)"
+          isCurrent={currentPlayer === "O"}
+          score={getScore("O")}
+        />
       </div>
     </div>
   );

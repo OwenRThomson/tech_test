@@ -1,19 +1,37 @@
 import React, { useState } from "react";
-import { XorO, Board, EndState } from "./types";
+import { XorO, Board, EndState, Score } from "./types";
 import BoardComponent from "./components/Board";
 import { checkWinner } from "./utils/checkWinner";
 import BoardHeader from "./components/BoardHeader";
 import BoardFooter from "./components/BoardFooter";
+import { useEffect } from "react";
+import { getScores, saveScore } from "./database/api";
 
 export const Main = () => {
-  const [gameSize, setGameSize] = useState(15); // Make gameSize dynamic
+  const [gameSize, setGameSize] = useState(3); // Make gameSize dynamic
 
   const [board, setBoard] = useState<Board>(
     Array.from({ length: gameSize }, () => Array(gameSize).fill(null))
   );
 
-  const [currentPlayer, setCurrentPlayer] = useState("X" as XorO);
+  const [currentPlayer, setCurrentPlayer] = useState<XorO>("X");
   const [endState, setEndState] = useState<EndState>(null); // Track the win state
+  const [scores, setScores] = useState<Score[]>([]); // Track scores
+
+  // Fetch scores when the component mounts
+  useEffect(() => {
+    const fetchScores = async () => {
+      const { data, error } = await getScores();
+      if (error) {
+        console.error("Error fetching scores:", error);
+        alert(`Error fetching scores: ${error.message}`);
+        return;
+      }
+      setScores(data);
+    };
+
+    fetchScores();
+  }, []);
 
   const handleGameSizeChange = (newSize: number) => {
     setGameSize(newSize);
@@ -21,7 +39,7 @@ export const Main = () => {
     setEndState(null);
   };
 
-  const handleMove = (row: number, col: number) => {
+  const handleMove = async (row: number, col: number) => {
     if (board[row][col] !== null) return; // TODO: Add user feedback, Skip go? Idk I think if you're stupid enough to click a taken cell you deserve to lose your turn!
 
     const newBoard = board.map((r, rowIndex) =>
@@ -37,6 +55,33 @@ export const Main = () => {
 
     if (endState !== null) {
       setEndState(endState); // Update the win state
+      /*
+        Here I could just call the DB again to get the scores, but I think it's better to just update the state for snappy UI
+      */
+      setScores((prevScores) => {
+        // Check if this winner already exists in scores
+        const winnerExists = prevScores.some(
+          (score) => score.player_winner === endState
+        );
+
+        if (winnerExists) {
+          // someone has won before, increment
+          return prevScores.map((score) =>
+            score.player_winner === endState
+              ? { ...score, count: score.count + 1 }
+              : score
+          );
+        } else {
+          return [...prevScores, { player_winner: endState, count: 1 }];
+        }
+      });
+
+      const { error } = await saveScore(endState);
+
+      if (error) {
+        alert("Error saving score: " + error.message);
+        return;
+      }
     }
   };
 
@@ -69,7 +114,7 @@ export const Main = () => {
         id="game-board"
         className="w-1/2 space-x-4 space-y-4 bg-white h-full flex items-center justify-center flex-col"
       >
-        <BoardHeader currentPlayer={currentPlayer} />
+        <BoardHeader currentPlayer={currentPlayer} scores={scores} />
         <BoardComponent board={board} handleMove={handleMove} />
 
         {endState && (
