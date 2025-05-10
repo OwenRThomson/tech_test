@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { XorO, Board } from "./types";
 import BoardComponent from "./components/Board";
+import { checkWinner } from "./utils/checkWinner";
 
 export const Main = () => {
   const gameSize = 3; // TODO: Make this dynamic
@@ -23,7 +24,13 @@ export const Main = () => {
     setBoard(newBoard);
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
 
-    // TODO: Check for win or draw
+    if (checkWinner(newBoard)) {
+      setBoard(
+        Array.from({ length: gameSize }, () => Array(gameSize).fill(null))
+      );
+
+      alert(`${currentPlayer} wins!`); // TODO: This is a placeholder, I need to add something nicer
+    }
   };
 
   return (
