@@ -12,9 +12,12 @@ export type Player = {
 };
 
 // My initial idea for a game state that may be rewritten later
-export type GameState = {
-  board: Board;
-  currentPlayer: Player;
-  winner: Player | null;
-  isDraw: boolean;
+export type GameResult = {
+  id: number;
+  player_winner: EndState;
+};
+
+export type Score = {
+  player_winner: EndState;
+  count: number;
 };
