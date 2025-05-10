@@ -1,6 +1,6 @@
-import { Board, XorO } from "../types";
+import { Board, EndState, XorO } from "../types";
 
-export function checkWinner(board: Board): XorO | null {
+export function checkWinner(board: Board): EndState {
   const size = board.length;
 
   // Convert the board to numeric values. This will make it easier as things scale
@@ -62,6 +62,10 @@ export function checkWinner(board: Board): XorO | null {
 
   if (raisedDiagonalSum === size) return "X";
   if (raisedDiagonalSum === -size) return "O";
+
+  // Check for a draw (full board)
+  const isBoardFull = board.every((row) => row.every((cell) => cell !== null));
+  if (isBoardFull) return "Draw";
 
   // No winner
   return null;

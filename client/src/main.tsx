@@ -24,12 +24,14 @@ export const Main = () => {
     setBoard(newBoard);
     setCurrentPlayer(currentPlayer === "X" ? "O" : "X");
 
-    if (checkWinner(newBoard)) {
+    let endState = checkWinner(newBoard);
+
+    if (endState !== null) {
       setBoard(
         Array.from({ length: gameSize }, () => Array(gameSize).fill(null))
       );
 
-      alert(`${currentPlayer} wins!`); // TODO: This is a placeholder, I need to add something nicer
+      alert(`${endState}`); // TODO: This is a placeholder, I need to add something nicer
     }
   };
 
