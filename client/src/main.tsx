@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import { XorO, Board } from "./types";
+import { XorO, Board, EndState } from "./types";
 import BoardComponent from "./components/Board";
 import { checkWinner } from "./utils/checkWinner";
+import BoardHeader from "./components/BoardHeader";
+import BoardFooter from "./components/BoardFooter";
 
 export const Main = () => {
-  const gameSize = 3; // TODO: Make this dynamic
+  const gameSize = 15; // TODO: Make this dynamic
 
   const [board, setBoard] = useState<Board>(
     Array.from({ length: gameSize }, () => Array(gameSize).fill(null))
   );
 
   const [currentPlayer, setCurrentPlayer] = useState("X" as XorO);
+  const [endState, setEndState] = useState<EndState>(null); // Track the win state
 
   const handleMove = (row: number, col: number) => {
     if (board[row][col] !== null) return; // TODO: Add user feedback, Skip go? Idk I think if you're stupid enough to click a taken cell you deserve to lose your turn!
@@ -27,20 +30,40 @@ export const Main = () => {
     let endState = checkWinner(newBoard);
 
     if (endState !== null) {
-      setBoard(
-        Array.from({ length: gameSize }, () => Array(gameSize).fill(null))
-      );
-
-      alert(`${endState}`); // TODO: This is a placeholder, I need to add something nicer
+      setEndState(endState); // Update the win state
     }
   };
 
   return (
-    <div className="flex flex-col mt-10 items-center gap-10">
-      <div className="font-bold text-2xl">Tic Tac Toe</div>
-      <BoardComponent board={board} handleMove={handleMove} />
+    <div className="flex flex-row h-screen  items-center  justify-center">
+      <div className="w-1/2 space-y-4 bg-primary-400 text-white h-full flex items-center justify-center flex-col">
+        <h1 className="text-4xl font-bold ">Tic Tac Toe</h1>
+        <p className="text-2xl ">
+          A simple Tic Tac Toe game built with React and TypeScript.
+        </p>
+      </div>
 
-      <div className="flex gap-5">Current Player: {currentPlayer}</div>
+      <div
+        id="game-board"
+        className="w-1/2 space-x-4 space-y-4 bg-white h-full flex items-center justify-center flex-col"
+      >
+        <BoardHeader currentPlayer={currentPlayer} />
+        <BoardComponent board={board} handleMove={handleMove} />
+
+        {endState && (
+          <BoardFooter
+            endState={endState}
+            onRestart={() => {
+              setBoard(
+                Array.from({ length: gameSize }, () =>
+                  Array(gameSize).fill(null)
+                )
+              );
+              setEndState(null);
+            }}
+          />
+        )}
+      </div>
     </div>
   );
 };
