@@ -7,11 +7,13 @@ To run the code. I wasn't able to get a dockerfile working in time so you'll nee
 In terminal A:
 
 - Run `cd client`
+- Run `npm install`
 - Run `npm run start`
 
 In terminal B:
 
 - Run `cd server`
+- Run `npm install`
 - Run `npm run start`
 
 When running the server, an SQLite file should appear as `server/db/db.sqlite`. It resets whenever the database reruns.
